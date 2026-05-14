@@ -1,0 +1,57 @@
+.hero-card {
+  background: linear-gradient(135deg, #f4efe2, #fffdf8);
+}
+
+.list-card {
+  padding: 22rpx 24rpx;
+}
+
+.action-button {
+  border: none;
+  border-radius: 999rpx;
+  background: #1f6b52;
+  color: #fffdf8;
+  font-size: 28rpx;
+}
+
+.secondary-action {
+  background: #e8f1ec;
+  color: #1f6b52;
+}
+
+.picker-row {
+  padding: 20rpx 24rpx;
+  border-radius: 18rpx;
+  background: rgba(255, 253, 248, 0.72);
+  font-size: 28rpx;
+  color: #2d2a26;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.stats-card {
+  background: #fffdf8;
+  border-radius: 24rpx;
+  padding: 24rpx 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(76, 61, 37, 0.08);
+}
+
+.stats-value {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 10rpx;
+}
+
+.quick-card {
+  border: 1rpx solid #efe7d7;
+}
+
+.quick-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}

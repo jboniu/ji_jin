@@ -1,0 +1,61 @@
+<view class="page-shell stack">
+  <view class="state-card" wx:if="{{isLoading}}">
+    <view class="state-title">首页加载中</view>
+    <view class="muted-text">正在同步用户和报告数据</view>
+  </view>
+
+  <view class="state-card" wx:elif="{{loadError}}">
+    <view class="state-title">首页加载失败</view>
+    <view class="muted-text">{{loadError}}</view>
+  </view>
+
+  <block wx:else>
+    <view class="hero-card stack">
+      <view class="pill">基金日报助手</view>
+      <view class="section-title">你好，{{userName}}</view>
+      <view class="picker-row">当前登录用户：{{userName}}（{{currentUserId}}）</view>
+      <view class="muted-text">{{todayStatus}}</view>
+      <button class="action-button secondary-action" bindtap="handleLogout">退出登录</button>
+    </view>
+
+    <view class="stats-grid">
+      <block wx:for="{{stats}}" wx:key="label">
+        <view class="stats-card">
+          <view class="stats-value">{{item.value}}</view>
+          <view class="muted-text">{{item.label}}</view>
+        </view>
+      </block>
+    </view>
+
+    <view class="section-card stack">
+      <view class="section-title">今日日报状态</view>
+      <view class="muted-text">{{reportStatusText}}</view>
+      <button class="action-button" bindtap="handleGenerateReport" loading="{{generating}}">
+        立即生成日报
+      </button>
+    </view>
+
+    <view class="section-card stack">
+      <view class="section-title">最近报告</view>
+      <view class="muted-text">{{latestReportText}}</view>
+      <button wx:if="{{latestReportId}}" class="action-button secondary-action" bindtap="handleOpenLatestReport">
+        查看最近报告
+      </button>
+    </view>
+
+    <view class="section-card stack">
+      <view class="section-title">用户设置</view>
+      <button class="action-button" bindtap="handleOpenProfile">编辑用户资料</button>
+    </view>
+
+    <view class="section-card stack">
+      <view class="section-title">快捷入口</view>
+      <block wx:for="{{quickActions}}" wx:key="title">
+        <view class="list-card quick-card" bindtap="handleQuickAction" data-key="{{item.key}}">
+          <view class="quick-title">{{item.title}}</view>
+          <view class="muted-text">{{item.subtitle}}</view>
+        </view>
+      </block>
+    </view>
+  </block>
+</view>

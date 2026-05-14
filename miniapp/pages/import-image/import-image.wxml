@@ -1,0 +1,21 @@
+<view class="page-shell stack">
+  <view class="hero-card stack">
+    <view class="pill">持仓导入</view>
+    <view class="section-title">上传持仓截图</view>
+    <view class="muted-text">这一版会先把原图保存到后端，下一步再接 OCR 识别。</view>
+  </view>
+
+  <view class="section-card stack">
+    <button class="action-button secondary-action" bindtap="handleChooseImage">选择截图</button>
+
+    <image wx:if="{{localImagePath}}" class="preview-image" src="{{localImagePath}}" mode="widthFix" />
+
+    <button class="action-button" bindtap="handleUploadImage" loading="{{uploading}}">
+      上传截图
+    </button>
+
+    <view class="muted-text">{{resultText}}</view>
+    <view class="muted-text" wx:if="{{uploadTaskId}}">任务号：{{uploadTaskId}}</view>
+    <view class="muted-text" wx:if="{{uploadedFileName}}">保存文件：{{uploadedFileName}}</view>
+  </view>
+</view>

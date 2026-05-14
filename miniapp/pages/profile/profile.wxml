@@ -1,0 +1,46 @@
+<view class="page-shell stack">
+  <view class="hero-card stack">
+    <view class="section-title">用户资料</view>
+    <view class="muted-text">当前用户：{{userId}}</view>
+    <view class="muted-text" wx:if="{{message}}">{{message}}</view>
+  </view>
+
+  <view class="section-card stack">
+    <view class="field-block">
+      <view class="field-label">用户名</view>
+      <input class="field-input" value="{{form.owner}}" placeholder="请输入用户名" bindinput="handleOwnerInput" />
+    </view>
+
+    <view class="field-block">
+      <view class="field-label">邮箱列表</view>
+      <input
+        class="field-input"
+        value="{{form.emailText}}"
+        placeholder="多个邮箱用英文逗号分隔"
+        bindinput="handleEmailInput"
+      />
+    </view>
+
+    <view class="field-block">
+      <view class="field-label">订阅邮箱发送报告</view>
+      <view class="switch-row">
+        <view class="muted-text">
+          {{form.subscribeEmailReports ? "开启后每次生成日报都会自动发到邮箱" : "关闭后生成日报时不会发送邮箱"}}
+        </view>
+        <switch
+          checked="{{form.subscribeEmailReports}}"
+          color="#1f6b52"
+          bindchange="handleSubscribeChange"
+        />
+      </view>
+    </view>
+
+    <button class="save-button" bindtap="handleSave" loading="{{saving}}">保存资料</button>
+  </view>
+
+  <view class="section-card stack">
+    <view class="section-title">账号安全</view>
+    <view class="muted-text">你可以在这里修改当前账号的登录密码。</view>
+    <button class="secondary-button" bindtap="handleGoChangePassword">修改密码</button>
+  </view>
+</view>

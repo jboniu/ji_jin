@@ -1,0 +1,44 @@
+text {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 26rpx;
+  color: #2d2a26;
+}
+text {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 26rpx;
+  color: #2d2a26;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.meta-card {
+  background: #fffdf8;
+  border-radius: 24rpx;
+  padding: 24rpx 20rpx;
+  box-shadow: 0 8rpx 24rpx rgba(76, 61, 37, 0.08);
+}
+
+.meta-value {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.meta-small {
+  font-size: 24rpx;
+  line-height: 1.5;
+}
+
+.report-body {
+  line-height: 1.8;
+}
+
+.report-body rich-text {
+  color: #2d2a26;
+}

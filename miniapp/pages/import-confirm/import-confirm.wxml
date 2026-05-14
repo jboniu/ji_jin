@@ -1,0 +1,31 @@
+<view class="page-shell stack">
+  <view class="hero-card stack">
+    <view class="pill">识别确认</view>
+    <view class="section-title">确认导入持仓</view>
+    <view class="muted-text">{{message}}</view>
+  </view>
+
+  <view class="state-card" wx:if="{{loading}}">
+    <view class="state-title">识别结果加载中</view>
+  </view>
+
+  <view class="state-card" wx:elif="{{loadError}}">
+    <view class="state-title">读取失败</view>
+    <view class="muted-text">{{loadError}}</view>
+  </view>
+
+  <view class="stack" wx:else>
+    <block wx:for="{{items}}" wx:key="index">
+      <view class="section-card stack">
+        <view class="section-title">{{item.fund_name}}</view>
+        <view class="muted-text" wx:if="{{item.fund_code}}">基金代码：{{item.fund_code}}</view>
+        <view class="muted-text">持仓金额：{{item.holding_amount}}</view>
+        <view class="muted-text" wx:if="{{item.category}}">分类：{{item.category}}</view>
+      </view>
+    </block>
+
+    <button class="action-button" bindtap="handleConfirmImport" loading="{{confirming}}">
+      确认导入持仓
+    </button>
+  </view>
+</view>

@@ -1,0 +1,153 @@
+.hero-nav {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #1f6b52;
+}
+
+.list-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 28rpx;
+}
+
+.trend-tabs {
+  display: flex;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.trend-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.trend-title-no-margin {
+  margin-bottom: 0;
+}
+
+.trend-tab {
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+  background: #f4ede1;
+  color: #7d7468;
+  font-size: 24rpx;
+}
+
+.trend-tab-active {
+  background: #1f6b52;
+  color: #fffdf8;
+}
+
+.detail-trend-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2rpx;
+  padding: 10rpx 14rpx;
+  border-radius: 18rpx;
+  font-size: 22rpx;
+  line-height: 1.2;
+}
+
+.detail-trend-badge-value {
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.chart-shell {
+  position: relative;
+  border-radius: 24rpx;
+  background: linear-gradient(180deg, #fbf7ef 0%, #f3ebdd 100%);
+  padding: 18rpx 16rpx 12rpx;
+}
+
+.chart-tooltip {
+  position: absolute;
+  min-width: 92rpx;
+  padding: 10rpx 14rpx;
+  border-radius: 16rpx;
+  background: rgba(31, 107, 82, 0.92);
+  color: #fffdf8;
+  box-shadow: 0 8rpx 20rpx rgba(31, 107, 82, 0.18);
+  z-index: 2;
+}
+
+.chart-tooltip-date {
+  font-size: 20rpx;
+  opacity: 0.9;
+  line-height: 1.2;
+}
+
+.chart-tooltip-value {
+  margin-top: 4rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.history-chart {
+  display: block;
+}
+
+.chart-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+}
+
+.chart-stat-card {
+  background: #f7f2e8;
+  border-radius: 18rpx;
+  padding: 16rpx;
+}
+
+.chart-stat-label {
+  font-size: 22rpx;
+  color: #7d7468;
+  margin-bottom: 6rpx;
+}
+
+.chart-stat-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2d2a26;
+}
+
+.chart-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #7d7468;
+  font-size: 24rpx;
+  gap: 12rpx;
+}
+
+.chart-axis-labels text:nth-child(2) {
+  flex: 1;
+  text-align: center;
+}
+
+.chart-axis-labels text:first-child {
+  text-align: left;
+}
+
+.chart-axis-labels text:last-child {
+  text-align: right;
+}
+
+.trend-up {
+  background: #fff1ef;
+  color: #cf1322;
+}
+
+.trend-down {
+  background: #f6ffed;
+  color: #237804;
+}
+
+.trend-flat {
+  background: #f5f5f5;
+  color: #595959;
+}

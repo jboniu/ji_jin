@@ -1,0 +1,38 @@
+<view class="login-page">
+  <view class="login-header">
+    <view class="login-logo">基金日报助手</view>
+    <view class="login-title">欢迎登录</view>
+    <view class="login-subtitle">登录后查看你的持仓、报告和导入结果</view>
+  </view>
+
+  <view class="login-form">
+    <view class="input-group">
+      <input
+        class="login-input"
+        placeholder="请输入账号"
+        placeholder-class="login-placeholder"
+        value="{{username}}"
+        bindinput="handleUsernameInput"
+      />
+    </view>
+
+    <view class="input-group">
+      <input
+        class="login-input"
+        password="true"
+        placeholder="请输入密码"
+        placeholder-class="login-placeholder"
+        value="{{password}}"
+        bindinput="handlePasswordInput"
+      />
+    </view>
+
+    <view class="login-error" wx:if="{{errorText}}">{{errorText}}</view>
+
+    <button class="login-button" bindtap="handleLogin" loading="{{loading}}">
+      登录
+    </button>
+  </view>
+
+  <view class="login-footer">{{tips}}</view>
+</view>

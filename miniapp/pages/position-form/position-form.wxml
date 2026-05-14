@@ -1,0 +1,40 @@
+<view class="page-shell stack">
+  <view class="hero-card stack">
+    <view class="section-title">{{isEdit ? '编辑持仓' : '新增持仓'}}</view>
+    <view class="muted-text">填写基金基础信息与持仓金额</view>
+  </view>
+
+  <view class="section-card stack">
+    <view class="field-block">
+      <view class="field-label">基金代码</view>
+      <input class="field-input" value="{{form.fundCode}}" data-field="fundCode" bindinput="handleInput" />
+    </view>
+
+    <view class="field-block">
+      <view class="field-label">基金名称</view>
+      <input class="field-input" value="{{form.fundName}}" data-field="fundName" bindinput="handleInput" />
+    </view>
+
+    <view class="field-block">
+      <view class="field-label">分类</view>
+      <input class="field-input" value="{{form.category}}" data-field="category" bindinput="handleInput" />
+    </view>
+
+    <view class="field-block">
+      <view class="field-label">持仓金额</view>
+      <input class="field-input" type="digit" value="{{form.holdingAmount}}" data-field="holdingAmount" bindinput="handleInput" />
+    </view>
+
+    <view class="field-block">
+      <view class="field-label">备注</view>
+      <input class="field-input" value="{{form.note}}" data-field="note" bindinput="handleInput" />
+    </view>
+
+    <button class="save-button" bindtap="handleSave" loading="{{saving}}" disabled="{{saving}}">
+      {{saving ? '提交中' : '保存持仓'}}
+    </button>
+    <button wx:if="{{isEdit}}" class="delete-button" bindtap="handleDelete" disabled="{{saving}}">
+      删除持仓
+    </button>
+  </view>
+</view>

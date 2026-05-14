@@ -1,0 +1,33 @@
+<view class="page-shell stack">
+  <view class="hero-card stack">
+    <view class="section-title">{{fileName}}</view>
+    <view class="muted-text">{{owner}}</view>
+  </view>
+
+  <view class="meta-grid">
+    <view class="meta-card">
+      <view class="meta-value">{{fileType || '--'}}</view>
+      <view class="muted-text">报告类型</view>
+    </view>
+    <view class="meta-card">
+      <view class="meta-value">{{owner || '--'}}</view>
+      <view class="muted-text">归属用户</view>
+    </view>
+    <view class="meta-card">
+      <view class="meta-value meta-small">{{updatedAtText}}</view>
+      <view class="muted-text">更新时间</view>
+    </view>
+  </view>
+
+  <view class="section-card report-body" wx:if="{{fileType === 'doc'}}">
+    <rich-text nodes="{{htmlContent}}"></rich-text>
+  </view>
+
+  <view class="section-card report-body" wx:elif="{{fileType === 'md'}}">
+    <text selectable="true">{{content}}</text>
+  </view>
+
+  <view class="section-card report-body" wx:else>
+    <text selectable="true">{{content}}</text>
+  </view>
+</view>

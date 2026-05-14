@@ -1,0 +1,182 @@
+<view class="page-shell stack portfolio-page">
+  <view class="state-card" wx:if="{{isLoading}}">
+    <view class="state-title">持仓加载中</view>
+    <view class="muted-text">正在读取持仓与基金行情</view>
+  </view>
+
+  <view class="state-card" wx:elif="{{loadError}}">
+    <view class="state-title">持仓加载失败</view>
+    <view class="muted-text">{{loadError}}</view>
+  </view>
+
+  <block wx:else>
+    <view class="portfolio-hero-card">
+      <view class="hero-top-row">
+        <view class="hero-title-wrap">
+          <view class="hero-title-line">
+            <text class="hero-title">我的持有</text>
+            <view class="icon-eye">
+              <view class="icon-eye-outline"></view>
+              <view class="icon-eye-pupil"></view>
+            </view>
+          </view>
+          <view class="hero-subtitle">共 <text class="hero-subtitle-strong">{{summary.total}}</text> 只基金</view>
+        </view>
+
+        <view class="hero-actions">
+          <button class="hero-action hero-action-ghost" bindtap="handleOpenImportImage">
+            <view class="hero-action-icon upload-icon">
+              <view class="upload-box"></view>
+              <view class="upload-arrow-line"></view>
+              <view class="upload-arrow-head"></view>
+            </view>
+            <text class="hero-action-text">截图导入</text>
+          </button>
+          <button class="hero-action hero-action-solid" bindtap="handleCreatePosition">
+            <view class="hero-action-icon plus-icon">
+              <view class="plus-circle"></view>
+              <view class="plus-h"></view>
+              <view class="plus-v"></view>
+            </view>
+            <text class="hero-action-text">新增持仓</text>
+          </button>
+        </view>
+      </view>
+
+      <view class="summary-grid">
+        <view class="summary-card">
+          <view class="summary-label-row">
+            <text class="summary-label">总持仓</text>
+            <view class="summary-icon summary-icon-slash"></view>
+          </view>
+          <view class="summary-value">{{summary.totalHoldingAmount}}</view>
+          <view class="summary-unit">元</view>
+        </view>
+
+        <view class="summary-card">
+          <view class="summary-label-row">
+            <text class="summary-label">估值数</text>
+            <view class="summary-icon summary-icon-info">i</view>
+          </view>
+          <view class="summary-value">{{summary.estimatedCount}}</view>
+          <view class="summary-unit">只</view>
+        </view>
+
+        <view class="summary-card">
+          <view class="summary-label-row">
+            <text class="summary-label">正式数</text>
+            <view class="summary-icon summary-icon-info">i</view>
+          </view>
+          <view class="summary-value">{{summary.officialCount}}</view>
+          <view class="summary-unit">只</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="portfolio-list-card">
+      <view class="toolbar-row">
+        <view class="toolbar-left">
+          <view class="toolbar-chip {{sortKey === 'default' ? 'toolbar-chip-active' : ''}}" bindtap="handleResetSort">默认</view>
+          <view class="toolbar-chip {{sortKey === 'holding' ? 'toolbar-chip-active' : ''}}" bindtap="handleHoldingSort">
+            <text>金额排序</text>
+            <text class="toolbar-chip-caret">{{amountSortDirection === 'desc' ? '⌄' : '⌃'}}</text>
+          </view>
+          <view class="toolbar-chip {{sortKey === 'change' ? 'toolbar-chip-active' : ''}}" bindtap="handleChangeSort">
+            <text>涨幅排序</text>
+            <text class="toolbar-chip-caret">{{changeSortDirection === 'desc' ? '⌄' : '⌃'}}</text>
+          </view>
+        </view>
+
+        <view class="toolbar-filter" bindtap="handleToggleFilterPanel">
+          <text>筛选</text>
+          <view class="filter-icon">
+            <view class="filter-line filter-line-top"></view>
+            <view class="filter-line filter-line-middle"></view>
+            <view class="filter-line filter-line-bottom"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="filter-panel" wx:if="{{showFilterOptions}}">
+        <view
+          wx:for="{{filterOptions}}"
+          wx:key="key"
+          class="filter-option {{activeFilter === item.key ? 'filter-option-active' : ''}}"
+          data-filter-key="{{item.key}}"
+          bindtap="handleFilterChange"
+        >
+          {{item.label}}
+        </view>
+      </view>
+
+      <view class="portfolio-status-line" wx:if="{{isRefreshing}}">
+        <view class="muted-text">正在更新最新行情</view>
+      </view>
+
+      <view class="state-card portfolio-empty-card" wx:if="{{!items.length}}">
+        <view class="state-title">还没有可显示的持仓</view>
+        <view class="muted-text">当前筛选条件下暂无基金项目</view>
+      </view>
+
+      <view class="portfolio-table" wx:else>
+        <view class="portfolio-table-head">
+          <view class="portfolio-col portfolio-col-name">名称</view>
+          <view class="portfolio-col portfolio-col-amount">金额/时间</view>
+          <view class="portfolio-col portfolio-col-change">当前涨幅</view>
+        </view>
+
+        <block wx:for="{{items}}" wx:key="fundCode">
+          <view
+            class="portfolio-row"
+            bindtap="handleOpenFundDetail"
+            data-fund-code="{{item.fundCode}}"
+            data-fund-name="{{item.fundName}}"
+          >
+            <view class="portfolio-main-row">
+              <view class="portfolio-col portfolio-col-name">
+                <view class="portfolio-fund-name">{{item.fundName}}</view>
+                <view class="portfolio-meta-row">
+                  <text class="portfolio-fund-code">{{item.fundCode}}</text>
+                  <text class="portfolio-category" wx:if="{{item.category}}">{{item.category}}</text>
+                </view>
+                <view class="portfolio-note" wx:if="{{item.note && item.note !== 'OCR导入'}}">备注：{{item.note}}</view>
+              </view>
+
+              <view class="portfolio-col portfolio-col-amount">
+                <view class="portfolio-amount">{{item.holdingAmount}}</view>
+                <view class="portfolio-sub">{{item.updatedAtLabel}}：{{item.updatedAt}}</view>
+
+                <view class="portfolio-trend-inline" wx:if="{{item.trendPoints.length}}">
+                  <canvas
+                    id="{{item.trendCanvasId}}"
+                    canvas-id="{{item.trendCanvasId}}"
+                    class="mini-trend-canvas"
+                    style="width: {{trendCanvasWidth}}px; height: {{trendCanvasHeight}}px;"
+                    width="{{trendCanvasWidth}}"
+                    height="{{trendCanvasHeight}}"
+                  ></canvas>
+                </view>
+              </view>
+
+              <view class="portfolio-col portfolio-col-change">
+                <view class="portfolio-change {{item.changeToneClass}}">{{item.displayNav}}</view>
+                <view class="portfolio-change-sub {{item.changeToneClass}}">{{item.displayNavLabel}}</view>
+                <view
+                  class="portfolio-edit-link"
+                  catchtap="handleEditPosition"
+                  data-fund-code="{{item.fundCode}}"
+                  data-fund-name="{{item.fundName}}"
+                  data-category="{{item.category}}"
+                  data-holding-amount="{{item.holdingAmount}}"
+                  data-note="{{item.note}}"
+                >
+                  编辑
+                </view>
+              </view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </block>
+</view>

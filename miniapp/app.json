@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/home/home",
+    "pages/portfolio/portfolio",
+    "pages/reports/reports",
+    "pages/report-detail/report-detail",
+    "pages/fund-detail/fund-detail",
+    "pages/profile/profile",
+    "pages/change-password/change-password",
+    "pages/position-form/position-form",
+    "pages/import-image/import-image",
+    "pages/import-confirm/import-confirm"
+  ],
+  "window": {
+    "navigationBarTitleText": "基金日报助手",
+    "navigationBarBackgroundColor": "#f7f4ea",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f5efe2",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#9b948b",
+    "selectedColor": "#1f6b52",
+    "backgroundColor": "#fffdf8",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/portfolio/portfolio",
+        "text": "持仓",
+        "iconPath": "assets/tabbar/portfolio.png",
+        "selectedIconPath": "assets/tabbar/portfolio-active.png"
+      },
+      {
+        "pagePath": "pages/reports/reports",
+        "text": "报告",
+        "iconPath": "assets/tabbar/reports.png",
+        "selectedIconPath": "assets/tabbar/reports-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,60 @@
+page {
+  background: #f5efe2;
+  color: #2d2a26;
+  font-family: "Microsoft YaHei", sans-serif;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 32rpx 24rpx 40rpx;
+  box-sizing: border-box;
+}
+
+.hero-card,
+.section-card,
+.list-card {
+  background: #fffdf8;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  box-shadow: 0 8rpx 24rpx rgba(76, 61, 37, 0.08);
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}
+
+.muted-text {
+  color: #7d7468;
+  font-size: 26rpx;
+}
+
+.pill {
+  display: inline-block;
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background: #ecf4ef;
+  color: #1f6b52;
+  font-size: 24rpx;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.state-card {
+  background: #fffdf8;
+  border-radius: 24rpx;
+  padding: 40rpx 28rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 24rpx rgba(76, 61, 37, 0.08);
+}
+
+.state-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}

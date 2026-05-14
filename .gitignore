@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# Environment files
+.env
+
+# IDE / editor
+.idea/
+.vscode/
+
+# Runtime data
+logs/
+reports/
+uploads/
+
+# Local caches / generated state
+portfolio.json
+quote_cache.json
+fund_name_cache.json
+report_tasks.json
+report_index.json
+import_tasks.json
+
+# OS files
+.DS_Store
+Thumbs.db

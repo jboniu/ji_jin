@@ -1,0 +1,126 @@
+<view class="page-shell stack">
+  <view class="hero-card stack">
+    <view class="pill">{{detail.displayNavLabel}}</view>
+    <view class="section-title">{{fundName || fundCode}}</view>
+    <view class="muted-text">{{fundCode}}</view>
+    <view class="hero-nav">{{detail.displayNav}}</view>
+    <view class="muted-text">{{detail.updatedAtLabel || '更新时间'}}：{{detail.updatedAt}}</view>
+    <view class="muted-text" wx:if="{{detail.marketHint}}">{{detail.marketHint}}</view>
+    <view class="muted-text" wx:if="{{isRefreshing}}">正在更新最新行情</view>
+  </view>
+
+  <view class="section-card stack">
+    <view class="section-title">净值信息</view>
+    <view class="muted-text">{{detail.primaryNavLabel}}</view>
+    <view class="list-row">
+      <text>{{detail.primaryNavTitle}}</text>
+      <text>{{detail.primaryNavValue}}</text>
+    </view>
+    <view class="muted-text">{{detail.primaryNavTimeLabel}}：{{detail.primaryNavTimeText}}</view>
+
+    <view class="list-row" wx:if="{{detail.primaryNavTitle !== '正式净值'}}">
+      <text>正式净值</text>
+      <text>{{detail.officialNav}}</text>
+    </view>
+    <view class="muted-text" wx:if="{{detail.primaryNavTitle !== '正式净值'}}">日期：{{detail.officialNavDate}}</view>
+
+    <view class="list-row" wx:if="{{detail.primaryNavTitle !== '盘中估值' && detail.primaryNavTitle !== '今日估值'}}">
+      <text>盘中估值</text>
+      <text>{{detail.estimatedNav}}</text>
+    </view>
+    <view class="muted-text" wx:if="{{detail.primaryNavTitle !== '盘中估值' && detail.primaryNavTitle !== '今日估值'}}">时间：{{detail.estimatedNavTime}}</view>
+
+    <view class="list-row" wx:if="{{detail.primaryNavTitle !== '最近净值'}}">
+      <text>最近净值</text>
+      <text>{{detail.lastAvailableNav}}</text>
+    </view>
+    <view class="muted-text" wx:if="{{detail.primaryNavTitle !== '最近净值'}}">日期：{{detail.lastAvailableNavDate}}</view>
+  </view>
+
+  <view class="section-card stack">
+    <view class="section-title">走势摘要</view>
+    <view class="list-row">
+      <text>{{detail.displayNavLabel}}</text>
+      <text>{{detail.dailyChangeRate}}</text>
+    </view>
+    <view class="list-row">
+      <text>近一周</text>
+      <text>{{detail.weeklyChangeRate}}</text>
+    </view>
+    <view class="list-row">
+      <text>近一月</text>
+      <text>{{detail.monthlyChangeRate}}</text>
+    </view>
+  </view>
+
+  <view class="section-card stack">
+    <view class="trend-summary-header">
+      <view class="section-title trend-title-no-margin">历史走势</view>
+      <view class="detail-trend-badge {{trendSummary.className}}">
+        <text>{{trendSummary.label}}</text>
+        <text class="detail-trend-badge-value">{{trendSummary.value}}</text>
+      </view>
+    </view>
+    <view class="trend-tabs">
+      <view
+        wx:for="{{historyPeriods}}"
+        wx:key="key"
+        class="trend-tab {{historyPeriod === item.key ? 'trend-tab-active' : ''}}"
+        data-period="{{item.key}}"
+        bindtap="onHistoryPeriodTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <view wx:if="{{historyLoading}}" class="muted-text">加载走势中...</view>
+
+    <block wx:elif="{{historyItems.length}}">
+      <view class="chart-shell">
+        <view
+          class="chart-tooltip"
+          style="left: {{selectedHistoryPoint.left}}px; top: {{selectedHistoryPoint.top}}px;"
+        >
+          <view class="chart-tooltip-date">{{selectedHistoryPoint.date}}</view>
+          <view class="chart-tooltip-value">{{selectedHistoryPoint.nav}}</view>
+        </view>
+        <canvas
+          id="historyChart"
+          canvas-id="historyChart"
+          class="history-chart"
+          style="width: {{chartWidth}}px; height: {{chartHeight}}px;"
+          width="{{chartWidth}}"
+          height="{{chartHeight}}"
+          bindtap="onHistoryChartTap"
+        ></canvas>
+      </view>
+
+      <view class="chart-stats">
+        <view class="chart-stat-card">
+          <view class="chart-stat-label">最低涨幅</view>
+          <view class="chart-stat-value">{{chartStats.minText}}</view>
+        </view>
+        <view class="chart-stat-card">
+          <view class="chart-stat-label">最新涨幅</view>
+          <view class="chart-stat-value">{{chartStats.latestNav}}</view>
+        </view>
+        <view class="chart-stat-card">
+          <view class="chart-stat-label">最高涨幅</view>
+          <view class="chart-stat-value">{{chartStats.maxText}}</view>
+        </view>
+      </view>
+
+      <view class="chart-axis-labels">
+        <text>{{chartStats.startDate}}</text>
+        <text>{{chartStats.middleDate}}</text>
+        <text>{{chartStats.endDate}}</text>
+      </view>
+    </block>
+
+    <view wx:else class="muted-text">{{historyEmptyText}}</view>
+  </view>
+
+  <view class="section-card" wx:if="{{detail.message}}">
+    <view class="muted-text">{{detail.message}}</view>
+  </view>
+</view>

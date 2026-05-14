@@ -1,0 +1,5 @@
+.preview-image {
+  width: 100%;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
