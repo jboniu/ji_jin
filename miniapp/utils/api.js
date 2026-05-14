@@ -1,4 +1,6 @@
-const DEFAULT_API_BASE_URL = "http://127.0.0.1:8000/api";
+const { CURRENT_ENV } = require("../config/env");
+
+const DEFAULT_API_BASE_URL = CURRENT_ENV.apiBaseUrl;
 
 function getAppSafe() {
   try {

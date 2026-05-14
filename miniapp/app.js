@@ -1,9 +1,12 @@
+const { ACTIVE_ENV, CURRENT_ENV } = require("./config/env");
+
 App({
   globalData: {
     currentUserId: "",
     currentOwner: "",
     authToken: "",
-    apiBaseUrl: "http://127.0.0.1:8000/api",
+    apiBaseUrl: CURRENT_ENV.apiBaseUrl,
+    runtimeEnv: ACTIVE_ENV,
     pageRefreshState: {},
   },
 

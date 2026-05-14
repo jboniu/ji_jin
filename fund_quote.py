@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, time
+from datetime import UTC, date, datetime, time, timedelta, timezone
 import json
 from pathlib import Path
 import re
@@ -33,6 +33,7 @@ USER_AGENT = (
 logger = get_logger("fund_quote")
 HTTP_SESSION = requests.Session()
 HTTP_SESSION.trust_env = False
+SHANGHAI_TZ = timezone(timedelta(hours=8))
 
 MARKET_HOLIDAYS_2026 = {
     date(2026, 1, 1),
@@ -121,8 +122,15 @@ def _parse_datetime(value: Any) -> datetime | None:
     return None
 
 
-def _today() -> date:
-    return datetime.now().date()
+def _now_shanghai() -> datetime:
+    return datetime.now(SHANGHAI_TZ)
+
+
+def _today(now: datetime | None = None) -> date:
+    current = now or _now_shanghai()
+    if current.tzinfo is None:
+        return current.date()
+    return current.astimezone(SHANGHAI_TZ).date()
 
 
 def _is_market_holiday(current_date: date) -> bool:
@@ -140,7 +148,7 @@ def _has_same_day_official_update(
     estimated: dict[str, Any] | None = None,
     now: datetime | None = None,
 ) -> bool:
-    current_date = (now or datetime.now()).date()
+    current_date = _today(now)
     official_date = _parse_date((official or {}).get("nav_date"))
     if official_date == current_date and _safe_float((official or {}).get("nav")) is not None:
         return True
@@ -179,11 +187,12 @@ def _http_get(url: str, **kwargs):
 
 
 def _get_market_status(now: datetime | None = None) -> str:
-    current = now or datetime.now()
-    if _is_non_trading_calendar_day(current.date()):
+    current = now or _now_shanghai()
+    current_date = _today(current)
+    if _is_non_trading_calendar_day(current_date):
         return "non_trading_day"
 
-    current_time = current.time()
+    current_time = current.astimezone(SHANGHAI_TZ).time() if current.tzinfo else current.time()
     if current_time < time(9, 30):
         return "pre_open"
     if current_time < time(11, 30):
@@ -196,11 +205,12 @@ def _get_market_status(now: datetime | None = None) -> str:
 
 
 def _get_today_change_phase(now: datetime | None = None) -> str:
-    current = now or datetime.now()
-    if _is_non_trading_calendar_day(current.date()):
+    current = now or _now_shanghai()
+    current_date = _today(current)
+    if _is_non_trading_calendar_day(current_date):
         return "non_trading_real"
 
-    current_time = current.time()
+    current_time = current.astimezone(SHANGHAI_TZ).time() if current.tzinfo else current.time()
     if current_time < time(9, 30):
         return "night_real"
     if current_time < time(15, 0):
@@ -254,7 +264,7 @@ def _build_today_change_payload(
 ) -> dict[str, Any]:
     intraday_change = intraday_change or {}
     trend = trend or {}
-    current = now or datetime.now()
+    current = now or _now_shanghai()
     phase = _get_today_change_phase(current)
     has_today_official = _has_same_day_official_update(official, estimated=estimated, now=current)
     estimated_rate = _safe_float((estimated or {}).get("change_rate"))
@@ -355,7 +365,7 @@ def _build_primary_nav_payload(
     now: datetime | None = None,
 ) -> dict[str, Any]:
     status = _safe_str(market_status)
-    today_text = _format_date(_today())
+    today_text = _format_date(_today(now))
     has_today_official = _has_same_day_official_update(official, estimated=estimated, now=now)
 
     if status == "trading":
@@ -470,7 +480,7 @@ def _is_cache_valid(cached_at: str | None) -> bool:
     cached_time = _parse_datetime(cached_at)
     if cached_time is None:
         return False
-    return (datetime.now() - cached_time).total_seconds() <= QUOTE_CACHE_TTL_SECONDS
+    return (_now_shanghai().replace(tzinfo=None) - cached_time).total_seconds() <= QUOTE_CACHE_TTL_SECONDS
 
 
 def _should_use_quote_cache(now: datetime | None = None) -> bool:
@@ -840,7 +850,7 @@ def build_display_quote(
 ) -> dict[str, Any]:
     """Apply the display priority: today's official NAV, else estimate, else latest NAV."""
     trend = trend or {}
-    now = datetime.now()
+    now = _now_shanghai()
     intraday_change = _build_intraday_change_payload(estimated=estimated, trend=trend)
     market_status = intraday_change.get("market_status")
     today_change = _build_today_change_payload(
@@ -1012,7 +1022,7 @@ def get_fund_quote(fund_code: str, fund_name: str = "") -> dict[str, Any]:
         if not result.get("fund_name"):
             result["fund_name"] = fund_name
         cache[cache_key] = {
-            "cached_at": _format_datetime(datetime.now()),
+            "cached_at": _format_datetime(_now_shanghai().replace(tzinfo=None)),
             "result": result,
         }
         _save_quote_cache(cache)
