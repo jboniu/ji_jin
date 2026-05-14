@@ -1,72 +1,89 @@
-﻿# 鏀粯瀹濆熀閲戣嚜鍔ㄥ垎鏋愮郴缁?
-褰撳墠闃舵鐩爣锛氳窇閫氭湰鍦?Python 鑴氭湰锛屾姄鍙栨柊闂诲苟鐢熸垚涓€浠?AI Markdown 鍒嗘瀽鎶ュ憡銆?
-## 褰撳墠鏂囦欢
-- `fetch_news.py`锛氭姄鍙栧叕寮€璐㈢粡鏂伴椈
-- `analyze_fund.py`锛氳皟鐢ㄥ吋瀹?OpenAI 鎺ュ彛鐨勫ぇ妯″瀷鐢熸垚鍩洪噾鍒嗘瀽
-- `generate_report.py`锛氱敓鎴?Markdown 鎶ュ憡
-- `portfolio.json`锛氭墜鍔ㄧ淮鎶ょ殑鎸佷粨缁撴瀯
-- `portfolio.py`锛氳鍙栧拰鏍煎紡鍖栨寔浠撴憳瑕?- `reports/`锛氭姤鍛婅緭鍑虹洰褰?
-## 鏈湴鍑嗗
-1. 鍒涘缓铏氭嫙鐜锛歚python -m venv .venv`
-2. 瀹夎渚濊禆锛歚.\.venv\Scripts\python.exe -m pip install -r requirements.txt`
-3. 澶嶅埗鐜鍙橀噺妯℃澘锛氬皢 `.env.example` 鍙﹀瓨涓?`.env`
-4. 鍦?`.env` 涓～鍐欐ā鍨嬮厤缃?5. 鍏堟祴璇曟姄鏂伴椈锛歚.\.venv\Scripts\python.exe .\fetch_news.py`
-6. 鍐嶇敓鎴愭姤鍛婏細`.\.venv\Scripts\python.exe .\generate_report.py`
+﻿# 支付宝基金自动分析系统
 
-## 鎸佷粨涓€у寲杈撳叆
-褰撳墠鏀寔閫氳繃 `portfolio.json` 鎵嬪姩缁存姢鎸佷粨缁撴瀯銆?
-鍙厛鍗曠嫭娴嬭瘯璇诲彇鏁堟灉锛?
+当前阶段目标：跑通本地 Python 脚本，抓取新闻、读取持仓，并生成一份 AI Markdown 分析报告。
+
+## 当前文件
+- `fetch_news.py`：抓取公开财经新闻
+- `analyze_fund.py`：调用兼容 OpenAI 接口的大模型生成基金分析
+- `generate_report.py`：生成 Markdown 报告
+- `portfolio.json`：单用户持仓配置
+- `users.json`：多用户持仓配置
+- `portfolio.py`：读取并格式化持仓摘要
+- `reports/`：报告输出目录
+
+## 本地准备
+1. 创建虚拟环境：`python -m venv .venv`
+2. 安装依赖：`.\.venv\Scripts\python.exe -m pip install -r requirements.txt`
+3. 复制环境变量模板：将 `.env.example` 另存为 `.env`
+4. 在 `.env` 中填写模型和邮件配置
+5. 先测试抓新闻：`.\.venv\Scripts\python.exe .\fetch_news.py`
+6. 再生成报告：`.\.venv\Scripts\python.exe .\generate_report.py`
+
+## 持仓输入
+当前支持通过 `portfolio.json` 或 `users.json` 维护持仓结构。
+
+可先单独测试读取效果：
 ```powershell
 cd D:\Project\ZJ-MY-PROJECT\ji_jin
 .\.venv\Scripts\python.exe .\portfolio.py
 ```
 
-褰撳墠鎶ュ憡浼氳嚜鍔ㄦ妸 `portfolio.json` 鐨勬寔浠撴憳瑕佷竴璧蜂紶缁?AI锛屽洜姝ゆ姤鍛婂唴瀹逛細鏇磋创杩戜綘鐨勭粍鍚堢粨鏋勩€?褰撳墠鏃ユ姤宸插崌绾т负鈥滄姇璧勪笓瀹惰瑙掆€濈殑鐗堟湰锛岄噸鐐硅緭鍑猴細
-- 杩戜竴鍛ㄥ競鍦哄洖椤?- 浠婃棩 15:00 鍓嶉噸鐐瑰叧娉?- 鍔犱粨瑙傚療
-- 鍑忎粨瑙傚療
-- 鎸佹湁瑙傚療
+报告会把持仓摘要一并传给 AI，因此输出内容会结合你的组合结构，重点关注：
+- 近一周市场回顾
+- 今日 15:00 前重点关注
+- 加仓观察
+- 减仓观察
+- 持有观察
 
-## 澶氱敤鎴峰噯澶?褰撳墠宸叉敮鎸侀€氳繃 `users.json` 缁存姢澶氫釜鐢ㄦ埛銆?
-姣忎釜鐢ㄦ埛鍙厤缃細
-- `user_id`锛氱敤鎴锋爣璇?- `owner`锛氱敤鎴峰悕绉?- `email_to`锛氳鐢ㄦ埛鐨勬敹浠堕偖绠卞垪琛?- `positions`锛氳鐢ㄦ埛鑷繁鐨勬寔浠?
-褰撳墠涓绘祦绋嬩細浼樺厛璇诲彇 `users.json`锛?- 濡傛灉閰嶇疆浜嗗涓敤鎴凤紝浼氶€愪釜鐢熸垚鎶ュ憡
-- 姣忎唤鎶ュ憡浼氭寜璇ョ敤鎴疯嚜宸辩殑 `email_to` 鍙戦€?- 鎶ュ憡鏂囦欢鍚嶄腑浼氬甫涓婄敤鎴峰悕绉帮紝渚夸簬鍖哄垎
+## 多用户支持
+当前已支持通过 `users.json` 维护多个用户。
 
-鍙厛鍗曠嫭娴嬭瘯璇诲彇鏁堟灉锛?
-```powershell
-cd D:\Project\ZJ-MY-PROJECT\ji_jin
-.\.venv\Scripts\python.exe .\portfolio.py
-```
+每个用户可配置：
+- `user_id`：用户标识
+- `owner`：用户名称
+- `email_to`：该用户的收件邮箱列表
+- `positions`：该用户自己的持仓
 
-## 鎺ㄨ崘閰嶇疆
-褰撳墠榛樿鎺ㄨ崘浣跨敤鏅鸿氨鍏嶈垂妯″瀷锛?
+当前主流程会优先读取 `users.json`：
+- 如果配置了多个用户，会逐个生成报告
+- 每份报告会按该用户自己的 `email_to` 发送
+- 报告文件名中会带上用户名称，便于区分
+
+## 推荐模型配置
+当前默认推荐使用智谱兼容接口：
+
 ```env
 LLM_PROVIDER=zhipu
-OPENAI_API_KEY=浣犵殑鏅鸿氨API Key
+OPENAI_API_KEY=你的智谱 API Key
 OPENAI_MODEL=glm-4.7-flash
 OPENAI_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
 ```
 
-濡傛灉鍚庣画瑕佸垏鍥?OpenAI锛屽彲鏀规垚锛?
+如果后续要切换到 OpenAI，可改成：
+
 ```env
 LLM_PROVIDER=openai
-OPENAI_API_KEY=浣犵殑OpenAI API Key
+OPENAI_API_KEY=你的 OpenAI API Key
 OPENAI_MODEL=gpt-4.1-mini
 ```
 
-## 閭鍙戦€侀厤缃?濡傛灉浣犲笇鏈涙姤鍛婄敓鎴愬悗鑷姩鍙戦€侀偖绠憋紝鍙互鍦?`.env` 涓ˉ鍏咃細
+## 邮件发送配置
+如果你希望报告生成后自动发送邮件，可以在 `.env` 中补充：
 
 ```env
 SMTP_HOST=smtp.qq.com
 SMTP_PORT=465
-SMTP_USERNAME=浣犵殑鍙戜欢閭
-SMTP_PASSWORD=浣犵殑SMTP鎺堟潈鐮?SMTP_USE_SSL=true
-EMAIL_FROM=浣犵殑鍙戜欢閭
-EMAIL_TO=浣犵殑鏀朵欢閭
+SMTP_USERNAME=你的发件邮箱
+SMTP_PASSWORD=你的 SMTP 授权码
+SMTP_USE_SSL=true
+EMAIL_FROM=你的发件邮箱
+EMAIL_TO=你的收件邮箱
 ```
 
-璇存槑锛?- `SMTP_PASSWORD` 涓€鑸笉鏄偖绠辩櫥褰曞瘑鐮侊紝鑰屾槸 SMTP 鎺堟潈鐮?- 甯歌閭濡?QQ銆?63銆佷紒涓氶偖绠遍兘鏀寔 SMTP
-- 濡傛灉娌℃湁閰嶇疆杩欎簺瀛楁锛岃剼鏈細鍙敓鎴愭湰鍦版姤鍛婏紝涓嶄細涓柇
+说明：
+- `SMTP_PASSWORD` 一般不是邮箱登录密码，而是 SMTP 授权码
+- 常见邮箱如 QQ、163、企业邮箱都支持 SMTP
+- 如果没有配置这些字段，脚本会只生成本地报告，不会中断
 
 ## 手动运行
 当前项目已停用“交易日自动执行日报脚本”。
@@ -88,6 +105,11 @@ powershell -ExecutionPolicy Bypass -File .\unregister_daily_task.ps1
 - `register_daily_task.ps1` 已不再注册自动任务
 - `.env` 里的 `TASK_TIME`、`TASK_WEEKDAYS` 仅作为历史配置保留，不再自动生效
 
-## 褰撳墠鐘舵€?椤圭洰宸叉帴鍏ュ熀纭€鏂伴椈鎶撳彇鍜?AI 鍒嗘瀽閫昏緫锛屽苟鏀寔鍒囨崲鍒版櫤璋卞吋瀹规帴鍙ｃ€?
-## 鏃ュ織涓庡け璐ラ噸璇?- 杩愯鏃ュ織浼氬啓鍏?`logs/fund_analysis.log`
-- AI 鍒嗘瀽澶辫触鏃朵細鑷姩閲嶈瘯 2 娆?- 閭欢鍙戦€佸け璐ユ椂浼氳嚜鍔ㄩ噸璇?2 娆?- 鍗充娇 AI 鎴栭偖浠跺け璐ワ紝鏃ュ織閲屼篃浼氫繚鐣欓敊璇粏鑺傦紝鏂逛究鎺掓煡
+## 当前状态
+项目已经接入基础新闻抓取、AI 分析、报告生成、邮件发送、数据库用户/持仓、以及微信小程序前端能力。
+
+## 日志与失败重试
+- 运行日志会写入 `logs/fund_analysis.log`
+- AI 分析失败时会自动重试
+- 邮件发送失败时会自动重试
+- 即使 AI 或邮件失败，日志里也会保留错误细节，方便排查
