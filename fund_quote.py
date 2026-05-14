@@ -233,15 +233,15 @@ def _build_intraday_change_payload(
         return {
             "intraday_change_rate": intraday_rate,
             "intraday_change_text": _format_signed_rate(intraday_rate),
-            "intraday_change_label": "实时估涨",
+            "intraday_change_label": "????",
             "market_status": market_status,
         }
 
     if market_status == "pre_open":
         return {
             "intraday_change_rate": None,
-            "intraday_change_text": "暂未开盘",
-            "intraday_change_label": "当前状态",
+            "intraday_change_text": "????",
+            "intraday_change_label": "????",
             "market_status": market_status,
         }
 
@@ -250,10 +250,9 @@ def _build_intraday_change_payload(
     return {
         "intraday_change_rate": intraday_rate,
         "intraday_change_text": _format_signed_rate(intraday_rate) if intraday_rate is not None else "--",
-        "intraday_change_label": "当前涨幅",
+        "intraday_change_label": "????",
         "market_status": market_status,
     }
-
 
 def _build_today_change_payload(
     intraday_change: dict[str, Any] | None,
@@ -280,32 +279,31 @@ def _build_today_change_payload(
         }
 
     if phase == "non_trading_real" and latest_real_rate is not None:
-        return build_payload(latest_real_rate, "最后交易日真实涨幅")
+        return build_payload(latest_real_rate, "?????????")
 
     if phase == "night_real" and latest_real_rate is not None:
-        return build_payload(latest_real_rate, "昨日真实涨幅")
+        return build_payload(latest_real_rate, "??????")
 
     if phase == "estimate_live" and latest_estimated_rate is not None:
-        return build_payload(latest_estimated_rate, "实时估涨")
+        return build_payload(latest_estimated_rate, "????")
 
     if phase == "estimate_after_close" and has_today_official and latest_real_rate is not None:
-        return build_payload(latest_real_rate, "真实涨幅")
+        return build_payload(latest_real_rate, "????")
 
     if phase == "estimate_after_close" and latest_estimated_rate is not None:
-        return build_payload(latest_estimated_rate, "今日估涨")
+        return build_payload(latest_estimated_rate, "????")
 
     if latest_estimated_rate is not None:
-        return build_payload(latest_estimated_rate, "今日估涨")
+        return build_payload(latest_estimated_rate, "????")
 
     if latest_real_rate is not None:
-        return build_payload(latest_real_rate, "真实涨幅")
+        return build_payload(latest_real_rate, "????")
 
     return {
         "today_change_rate": intraday_change.get("intraday_change_rate"),
         "today_change_text": intraday_change.get("intraday_change_text", "--"),
-        "today_change_label": intraday_change.get("intraday_change_label", "当前涨幅"),
+        "today_change_label": intraday_change.get("intraday_change_label", "????"),
     }
-
 
 def _build_today_change_time_payload(
     today_change: dict[str, Any] | None,
@@ -317,45 +315,43 @@ def _build_today_change_time_payload(
     today_change = today_change or {}
     label = _safe_str(today_change.get("today_change_label"))
 
-    if "估" in label:
+    if "?" in label:
         return {
-            "today_change_time_label": "估值时间",
-            "today_change_time_text": _safe_str((estimated or {}).get("nav_time")) or _safe_str(updated_at) or "暂无时间",
+            "today_change_time_label": "????",
+            "today_change_time_text": _safe_str((estimated or {}).get("nav_time")) or _safe_str(updated_at) or "????",
         }
 
-    if "真实" in label:
+    if "??" in label:
         return {
-            "today_change_time_label": "净值日期",
+            "today_change_time_label": "????",
             "today_change_time_text": _safe_str((official or {}).get("nav_date"))
             or _safe_str((last_available or {}).get("nav_date"))
             or _safe_str(updated_at)
-            or "暂无时间",
+            or "????",
         }
 
     return {
-        "today_change_time_label": "更新时间",
-        "today_change_time_text": _safe_str(updated_at) or "暂无时间",
+        "today_change_time_label": "????",
+        "today_change_time_text": _safe_str(updated_at) or "????",
     }
-
 
 def _build_market_hint_payload(market_status: str | None) -> dict[str, str]:
     status = _safe_str(market_status)
     if status == "non_trading_day":
         return {
-            "market_hint": "非交易日，展示最后交易日真实涨幅",
+            "market_hint": "????????????????",
         }
     if status == "pre_open":
         return {
-            "market_hint": "开盘前，展示上一交易日真实涨幅",
+            "market_hint": "???????????????",
         }
     if status == "closed":
         return {
-            "market_hint": "收盘后，优先展示当日最新可用数据",
+            "market_hint": "????????????????",
         }
     return {
         "market_hint": "",
     }
-
 
 def _build_primary_nav_payload(
     market_status: str | None,
@@ -370,20 +366,20 @@ def _build_primary_nav_payload(
 
     if status == "trading":
         return {
-            "primary_nav_label": "当前重点",
-            "primary_nav_title": "盘中估值",
+            "primary_nav_label": "????",
+            "primary_nav_title": "????",
             "primary_nav_value": (estimated or {}).get("nav"),
-            "primary_nav_time_label": "估值时间",
-            "primary_nav_time_text": (estimated or {}).get("nav_time") or "暂无",
+            "primary_nav_time_label": "????",
+            "primary_nav_time_text": (estimated or {}).get("nav_time") or "??",
         }
 
     if status == "closed" and not has_today_official:
         return {
-            "primary_nav_label": "当前重点",
-            "primary_nav_title": "今日估值",
+            "primary_nav_label": "????",
+            "primary_nav_title": "????",
             "primary_nav_value": (estimated or {}).get("nav"),
-            "primary_nav_time_label": "估值时间",
-            "primary_nav_time_text": (estimated or {}).get("nav_time") or "暂无",
+            "primary_nav_time_label": "????",
+            "primary_nav_time_text": (estimated or {}).get("nav_time") or "??",
         }
 
     latest_nav = (last_available or {}).get("nav")
@@ -393,13 +389,12 @@ def _build_primary_nav_payload(
         latest_nav_date = official.get("nav_date") or today_text
 
     return {
-        "primary_nav_label": "当前重点",
-        "primary_nav_title": "最近净值",
+        "primary_nav_label": "????",
+        "primary_nav_title": "????",
         "primary_nav_value": latest_nav,
-        "primary_nav_time_label": "净值日期",
-        "primary_nav_time_text": latest_nav_date or "暂无",
+        "primary_nav_time_label": "????",
+        "primary_nav_time_text": latest_nav_date or "??",
     }
-
 
 def _hydrate_today_change_fields(result: dict[str, Any] | None) -> dict[str, Any]:
     payload = dict(result or {})
@@ -487,17 +482,17 @@ def _should_use_quote_cache(now: datetime | None = None) -> bool:
     return _get_market_status(now) != "trading"
 
 
-def _empty_result(fund_code: str, fund_name: str = "", message: str = "未获取到基金数据") -> dict[str, Any]:
+def _empty_result(fund_code: str, fund_name: str = "", message: str = "????????") -> dict[str, Any]:
     return {
         "fund_code": fund_code,
         "fund_name": fund_name,
         "display_nav": None,
         "display_nav_type": "unknown",
-        "display_nav_label": "暂无数据",
-        "primary_nav_label": "当前重点",
-        "primary_nav_title": "最近净值",
+        "display_nav_label": "????",
+        "primary_nav_label": "????",
+        "primary_nav_title": "????",
         "primary_nav_value": None,
-        "primary_nav_time_label": "净值日期",
+        "primary_nav_time_label": "????",
         "primary_nav_time_text": "--",
         "official_nav": None,
         "official_nav_date": None,
@@ -510,11 +505,11 @@ def _empty_result(fund_code: str, fund_name: str = "", message: str = "未获取
         "monthly_change_rate": None,
         "intraday_change_rate": None,
         "intraday_change_text": "--",
-        "intraday_change_label": "当前涨幅",
+        "intraday_change_label": "????",
         "today_change_rate": None,
         "today_change_text": "--",
-        "today_change_label": "当前涨幅",
-        "today_change_time_label": "更新时间",
+        "today_change_label": "????",
+        "today_change_time_label": "????",
         "today_change_time_text": "--",
         "market_status": "unknown",
         "market_hint": "",
@@ -524,7 +519,6 @@ def _empty_result(fund_code: str, fund_name: str = "", message: str = "未获取
         "status": "error",
         "message": message,
     }
-
 
 def _require_akshare() -> None:
     if ak is None:
@@ -880,7 +874,7 @@ def build_display_quote(
 
     display_nav = None
     display_nav_type = "unknown"
-    display_nav_label = "暂无数据"
+    display_nav_label = "????"
     is_estimated_used = False
     updated_at = None
     status = "partial"
@@ -889,35 +883,35 @@ def build_display_quote(
     if official and official.get("nav") is not None and has_today_official:
         display_nav = official["nav"]
         display_nav_type = "official"
-        display_nav_label = "正式净值"
+        display_nav_label = "????"
         updated_at = official.get("nav_date")
         status = "ok"
-        message = "当日正式净值已更新，已展示正式净值"
+        message = "?????????????????"
     elif market_status in {"pre_open", "non_trading_day"} and latest_fallback and latest_fallback.get("nav") is not None:
         display_nav = latest_fallback["nav"]
         display_nav_type = "last_available"
-        display_nav_label = "最近净值"
+        display_nav_label = "????"
         updated_at = latest_fallback.get("nav_date")
         status = "ok"
-        message = "当前处于非交易时段，已展示最近一次正式净值"
+        message = "?????????????????????"
     elif estimated and estimated.get("nav") is not None:
         display_nav = estimated["nav"]
         display_nav_type = "estimated"
-        display_nav_label = "今日估值" if market_status == "closed" else "盘中估值"
+        display_nav_label = "????" if market_status == "closed" else "????"
         updated_at = estimated.get("nav_time")
         is_estimated_used = True
         status = "ok"
-        message = "收盘后正式净值未更新，已展示今日估值" if market_status == "closed" else "当日正式净值未更新，已展示盘中估值"
+        message = "??????????????????" if market_status == "closed" else "?????????????????"
     elif latest_fallback and latest_fallback.get("nav") is not None:
         display_nav = latest_fallback["nav"]
         display_nav_type = "last_available"
-        display_nav_label = "最近净值"
+        display_nav_label = "????"
         updated_at = latest_fallback.get("nav_date")
         status = "ok"
-        message = "当日净值和估值不可用，已回退最近一次正式净值"
+        message = "??????????????????????"
     else:
         status = "error"
-        message = "未获取到正式净值、估值或最近净值"
+        message = "????????????????"
 
     return {
         "fund_code": fund_code,
@@ -959,13 +953,12 @@ def build_display_quote(
         "message": message,
     }
 
-
 def get_fund_quote(fund_code: str, fund_name: str = "") -> dict[str, Any]:
     """Query a single fund and normalize the result for UI and report use."""
     fund_code = _safe_str(fund_code)
     fund_name = _safe_str(fund_name)
     if not fund_code:
-        return _empty_result(fund_code="", fund_name=fund_name, message="基金代码不能为空")
+        return _empty_result(fund_code="", fund_name=fund_name, message="????????")
 
     cache = _load_quote_cache()
     cache_key = _build_cache_key(fund_code)
@@ -975,7 +968,7 @@ def get_fund_quote(fund_code: str, fund_name: str = "") -> dict[str, Any]:
         if cached_result:
             if fund_name and not cached_result.get("fund_name"):
                 cached_result["fund_name"] = fund_name
-            cached_result["message"] = "已命中本地缓存"
+            cached_result["message"] = "???????"
             return cached_result
 
     try:
