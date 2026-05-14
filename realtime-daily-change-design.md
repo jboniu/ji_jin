@@ -1,37 +1,83 @@
-# 日涨幅分时段设计概要
+# 日涨幅与估值展示规则
 
-## 核心功能
-1. 盘中时段显示当日估算涨幅，而不是昨日真实涨幅。
-2. 当日 `15:00-24:00` 默认继续显示当日估算涨幅；如果当日真实净值已更新，则切换为真实涨幅。
-3. 当日 `00:00-09:30` 显示昨日真实涨幅。
-4. 持仓页和详情页统一使用同一套 `today_change_*` 字段，避免页面间口径不一致。
-5. 自动刷新逻辑只在盘中生效，保证 `14:00-14:30` 这类场景下用户停留页面时也能看到更新。
+## 核心目标
+1. 盘中优先展示当日估值与当日估涨，而不是上一交易日真实涨幅。
+2. 收盘后如果正式净值还没更新，继续展示“今日估值 / 今日估涨”。
+3. 开盘前与非交易日统一展示最近一个交易日的真实净值和真实涨幅。
+4. 持仓页和详情页统一依赖后端返回的 `today_change_*`、`intraday_change_*`、`display_nav_*` 字段，不在前端二次推导。
+
+## 当前规则
+### 时间基准
+- 所有交易时段判断统一按 `Asia/Shanghai` 计算。
+- 不能使用部署机器本地时区直接判断，否则会把北京时间下午误判成 `pre_open`。
+
+### 交易日 `09:30-15:00`
+- `market_status = trading`
+- `display_nav_type = estimated`
+- `display_nav_label = 盘中估值`
+- `primary_nav_title = 盘中估值`
+- `intraday_change_label = 实时估涨`
+- `today_change_label = 实时估涨`
+
+### 交易日 `15:00-24:00` 且正式净值未更新
+- `market_status = closed`
+- `display_nav_type = estimated`
+- `display_nav_label = 今日估值`
+- `primary_nav_title = 今日估值`
+- `intraday_change_label = 今日估涨`
+- `today_change_label = 今日估涨`
+- `intraday_change_rate` 与 `today_change_rate` 保持一致，统一使用估涨值
+
+### 交易日 `15:00-24:00` 且正式净值已更新
+- 优先展示正式净值
+- `display_nav_type = official`
+- `display_nav_label = 正式净值`
+- `today_change_label = 真实涨幅`
+
+### 交易日 `00:00-09:30`
+- `market_status = pre_open`
+- 展示最近一次正式净值
+- `today_change_label = 昨日真实涨幅`
+- `intraday_change_label = 当前状态`
+- `intraday_change_text = 暂未开盘`
+
+### 周末 / 节假日
+- `market_status = non_trading_day`
+- 展示最近一次正式净值
+- `today_change_label = 最后交易日真实涨幅`
+- 不展示“今日估值 / 今日估涨”
+
+## 关键字段约定
+- `display_nav_*`
+  用于主净值展示，决定当前最该展示的是正式净值、盘中估值还是最近净值。
+- `primary_nav_*`
+  用于前端主卡片标题和时间文案。
+- `intraday_change_*`
+  用于描述“当前时段最该看的涨幅”。
+- `today_change_*`
+  用于跨页面统一的“今日主涨幅”展示。
+- `market_hint`
+  只做辅助说明，不参与前端计算。
+- `message`
+  用于解释当前为什么展示这类数据。
 
 ## 主要文件
-- [fund_quote.py](D:/Project/ZJ-MY-PROJECT/ji_jin/fund_quote.py) - 处理时段判断、估算/真实涨幅切换、缓存兼容
-- [fund_quote_service.py](D:/Project/ZJ-MY-PROJECT/ji_jin/fund_quote_service.py) - 透传统一后的 `today_change_*` 字段
-- [portfolio.js](D:/Project/ZJ-MY-PROJECT/ji_jin/miniapp/pages/portfolio/portfolio.js) - 持仓页显示今日主涨幅并在盘中自动刷新
-- [fund-detail.js](D:/Project/ZJ-MY-PROJECT/ji_jin/miniapp/pages/fund-detail/fund-detail.js) - 详情页顶部显示今日主涨幅并在盘中自动刷新
+- [fund_quote.py](D:/Project/ZJ-MY-PROJECT/ji_jin/fund_quote.py)
+  负责交易时段判断、正式净值/估值优先级、接口中文文案和缓存兼容。
+- [fund_quote_service.py](D:/Project/ZJ-MY-PROJECT/ji_jin/fund_quote_service.py)
+  负责向上层接口透传统一后的行情字段。
+- [miniapp/pages/portfolio/portfolio.js](D:/Project/ZJ-MY-PROJECT/ji_jin/miniapp/pages/portfolio/portfolio.js)
+  负责持仓页展示。
+- [miniapp/pages/fund-detail/fund-detail.js](D:/Project/ZJ-MY-PROJECT/ji_jin/miniapp/pages/fund-detail/fund-detail.js)
+  负责详情页展示。
 
-## 技术选型
-- 后端继续使用现有 Python 聚合逻辑，不新增独立服务。
-- 时段判断继续使用 `Asia/Shanghai` 本地时间。
-- 估算涨幅优先使用东财估值接口 `gszzl`，必要时由 `estimated_nav` 和 `official_nav` 反算。
-- 真实涨幅继续使用历史正式净值里的 `daily_change_rate`。
+## 已验证场景
+1. 北京时间盘中，请求线上 `quotes`，不再误判为 `pre_open`。
+2. 盘中基金可返回 `display_nav_type = estimated`、`market_status = trading`。
+3. 接口中文文案已恢复正常，不再出现乱码或 `????`。
+4. 收盘后正式净值未更新时，`intraday_change_*` 与 `today_change_*` 已统一为“今日估涨”。
 
-## 实施步骤
-1. 后端把时段判断细化为：
-   - `00:00-09:30` 开盘前规则
-   - 工作日 `09:30-15:00` 盘中规则
-   - `15:00-24:00` 收盘后当日晚间规则
-2. 后端统一输出 `today_change_rate / today_change_text / today_change_label`。
-3. 旧缓存命中时，也按新规则补齐或重算 `today_change_*`。
-4. 持仓页和详情页主展示统一只认 `today_change_*`。
-5. 用户验证 3 个场景：
-   - 盘中
-   - 当日 `15:00` 后但真实净值未更新
-   - `00:00-09:30`
-
-## 说明
-- 这一版的重点是不同时间段看到的主涨幅口径正确。
-- 节假日和午休的更精细处理可以继续补，但不影响这次主规则落地。
+## 后续改动约束
+1. 如果调整 `market_status` 规则，必须同时检查 `display_nav_*`、`primary_nav_*`、`intraday_change_*`、`today_change_*` 是否仍然一致。
+2. 如果修改缓存逻辑，不能让缓存覆盖新的时段判断结果。
+3. 如果新增前端展示位，优先复用现有后端字段，不新增页面侧推导。

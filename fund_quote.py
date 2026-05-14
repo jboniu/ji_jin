@@ -305,6 +305,51 @@ def _build_today_change_payload(
         "today_change_label": intraday_change.get("intraday_change_label", "当前涨幅"),
     }
 
+
+def _build_intraday_change_payload(
+    estimated: dict[str, Any] | None,
+    trend: dict[str, Any] | None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    trend = trend or {}
+    market_status = _get_market_status(now)
+    estimated_rate = _safe_float((estimated or {}).get("change_rate"))
+    official_rate = _safe_float(trend.get("daily_change_rate"))
+
+    if market_status == "trading" and estimated_rate is not None:
+        intraday_rate = round(estimated_rate, 2)
+        return {
+            "intraday_change_rate": intraday_rate,
+            "intraday_change_text": _format_signed_rate(intraday_rate),
+            "intraday_change_label": "实时估涨",
+            "market_status": market_status,
+        }
+
+    if market_status == "pre_open":
+        return {
+            "intraday_change_rate": None,
+            "intraday_change_text": "暂未开盘",
+            "intraday_change_label": "当前状态",
+            "market_status": market_status,
+        }
+
+    if market_status == "closed" and estimated_rate is not None:
+        intraday_rate = round(estimated_rate, 2)
+        return {
+            "intraday_change_rate": intraday_rate,
+            "intraday_change_text": _format_signed_rate(intraday_rate),
+            "intraday_change_label": "今日估涨",
+            "market_status": market_status,
+        }
+
+    intraday_rate = round(official_rate, 2) if official_rate is not None else None
+    return {
+        "intraday_change_rate": intraday_rate,
+        "intraday_change_text": _format_signed_rate(intraday_rate) if intraday_rate is not None else "--",
+        "intraday_change_label": "当前涨幅",
+        "market_status": market_status,
+    }
+
 def _build_today_change_time_payload(
     today_change: dict[str, Any] | None,
     estimated: dict[str, Any] | None = None,
